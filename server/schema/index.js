@@ -24,8 +24,9 @@ const JobType = new GraphQLObjectType({
   fields: () => ({
     id: {type: GraphQLID},  
     name: {type: GraphQLString},
-    category: {type: GraphQLString},user: {
-      type: userType,
+    category: {type: GraphQLString},
+    user: {
+      type: UserType,
       resolve(parent, args){
         return _.find(users, {id: parent.userID})
       }
@@ -33,12 +34,18 @@ const JobType = new GraphQLObjectType({
   })
 })
 
-const userType = new GraphQLObjectType({
+const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
     id: {type: GraphQLID},
     name: {type: GraphQLString},
-    email: {type: GraphQLString}
+    email: {type: GraphQLString},
+    jobs: {
+      type: JobType,
+      resolve(parent,args){
+        return _.find(jobs, {userID: parent.id })
+      }
+    }
   })
 })
 
@@ -50,6 +57,13 @@ const RootQuery = new GraphQLObjectType({
       args: {id: {type: GraphQLInt}},
       resolve(parent, args){
         return _.find(jobs, {id: args.id})
+      }
+    },
+    user: {
+      type: UserType,
+      args: {id: {type:GraphQLInt}},
+      resolve(parent,args){
+        return _.find(users, {id: args.id})
       }
     }
   }
