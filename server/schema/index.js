@@ -9,19 +9,21 @@ const {
 } = require('graphql');
 const _ = require('lodash')
 const User = require('../model/user');
-const Job = require('../model/job');
+const Item = require('../model/item');
 const bcrypt = require('bcryptjs');
 
-const JobType = new GraphQLObjectType({
-  name: 'Job',
+const ItemType = new GraphQLObjectType({
+  name: 'Item',
   fields: () => ({
     id: {type: GraphQLID},  
     name: {type: GraphQLString},
+    price: {type: GraphQLInt},
+    description: {type: GraphQLString},
     category: {type: GraphQLString},
     user: {
-      type: UserType,
+      type: new GraphQLList(UserType),
       resolve(parent, args){
-        return User.findById(parent.userID)
+        return User.find({_id: parent.userID})
       }
     }
   })
@@ -35,9 +37,9 @@ const UserType = new GraphQLObjectType({
     email: {type: GraphQLString},
     password: {type: GraphQLString},
     jobs: {
-      type: JobType,
+      type: new GraphQLList(ItemType),
       resolve(parent,args){
-        return Job.find({userID: parent.id})
+        return Item.find({userID: parent.id})
       }
     }
   })
@@ -46,17 +48,17 @@ const UserType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
-    job: {
-      type: JobType,
+    item: {
+      type: ItemType,
       args: {id: {type: GraphQLInt}},
       resolve(parent, args){
-        return Job.findById(args.id)
+        return Item.findById(args.id)
       }
     },
-    jobs: {
-      type: new GraphQLList(JobType),
+    items: {
+      type: new GraphQLList(ItemType),
       resolve(parent,args){
-        return Job.find({})
+        return Item.find({})
       }
     },
     user: {
@@ -78,20 +80,24 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
-    addJob: {
-      type: JobType,
+    addItem: {
+      type: ItemType,
       args: {
         name: {type: GraphQLString},
+        description: {type: GraphQLString},
+        price: {type: GraphQLInt},
         category: {type: GraphQLString},
         userID: {type: GraphQLID}
       },
       resolve(parent,args){
-        let job = new Job({
+        let item = new Item({
           name: args.name,
+          description: args.description,
+          price: args.price,
           category: args.category,
           userID: args.userID
         })
-        return job.save();
+        return item.save();
       }
     },
     addUser: {
