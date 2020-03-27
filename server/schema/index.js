@@ -32,7 +32,8 @@ const JobType = new GraphQLObjectType({
     user: {
       type: UserType,
       resolve(parent, args){
-        return _.find(users, {id: parent.userID})
+        // return _.find(users, {id: parent.userID})
+        return User.findById(parent.userID)
       }
     }
   })
@@ -41,13 +42,15 @@ const JobType = new GraphQLObjectType({
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
-    name: {type: GraphQLString},
+    id: {type: GraphQLID},
+    username: {type: GraphQLString},
     email: {type: GraphQLString},
     password: {type: GraphQLString},
     jobs: {
       type: JobType,
       resolve(parent,args){
-        return _.find(jobs, {userID: parent.id })
+        // return _.find(jobs, {userID: parent.id })
+        return Job.find({userID: parent.id})
       }
     }
   })
@@ -60,26 +63,28 @@ const RootQuery = new GraphQLObjectType({
       type: JobType,
       args: {id: {type: GraphQLInt}},
       resolve(parent, args){
-        return _.find(jobs, {id: args.id})
+        // return _.find(jobs, {id: args.id})
+        return Job.findById(args.id)
       }
     },
     jobs: {
       type: new GraphQLList(JobType),
       resolve(parent,args){
-        return jobs
+        return Job.find({})
       }
     },
     user: {
       type: UserType,
       args: {id: {type:GraphQLInt}},
       resolve(parent,args){
-        return _.find(users, {id: args.id})
+        // return _.find(users, {id: args.id})
+        return User.findById(args.id)
       }
     },
     users: {
       type: new GraphQLList(UserType),
       resolve(parent, args){
-        return users
+        return User.find({})
       }
     }
   }
@@ -107,14 +112,14 @@ const Mutation = new GraphQLObjectType({
     addUser: {
       type: UserType,
       args: {
-        name: { type: GraphQLString},
+        username: { type: GraphQLString},
         email: {type: GraphQLString},
         password: {type: GraphQLString}
       },
       async resolve(parent,args){
         const hashed = await bcrypt.hash(args.password, 10)
         let user = new User({
-          name: args.name,
+          username: args.username,
           email: args.email,
           password: hashed
         })
