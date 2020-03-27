@@ -12,17 +12,6 @@ const User = require('../model/user');
 const Job = require('../model/job');
 const bcrypt = require('bcryptjs');
 
-const jobs = [
-  {id: 1, username: 'Software Engineer', category: 'Tech', userID: 1},
-  {id: 2, username: 'Landscaper', category: 'Landscaping', userID: 2}
-]
-
-const users = [
-  {id: 1, name: 'Trevor Thompson', email: 'Trevor24x@gmail.com'},
-  {id: 2, name: 'Chuck Smith', email: 'Trevor24x@gmail.com'}
-]
-
-
 const JobType = new GraphQLObjectType({
   name: 'Job',
   fields: () => ({
@@ -32,7 +21,6 @@ const JobType = new GraphQLObjectType({
     user: {
       type: UserType,
       resolve(parent, args){
-        // return _.find(users, {id: parent.userID})
         return User.findById(parent.userID)
       }
     }
@@ -49,7 +37,6 @@ const UserType = new GraphQLObjectType({
     jobs: {
       type: JobType,
       resolve(parent,args){
-        // return _.find(jobs, {userID: parent.id })
         return Job.find({userID: parent.id})
       }
     }
@@ -63,7 +50,6 @@ const RootQuery = new GraphQLObjectType({
       type: JobType,
       args: {id: {type: GraphQLInt}},
       resolve(parent, args){
-        // return _.find(jobs, {id: args.id})
         return Job.findById(args.id)
       }
     },
@@ -75,9 +61,8 @@ const RootQuery = new GraphQLObjectType({
     },
     user: {
       type: UserType,
-      args: {id: {type:GraphQLInt}},
+      args: {id: {type: GraphQLString}},
       resolve(parent,args){
-        // return _.find(users, {id: args.id})
         return User.findById(args.id)
       }
     },
@@ -98,7 +83,7 @@ const Mutation = new GraphQLObjectType({
       args: {
         name: {type: GraphQLString},
         category: {type: GraphQLString},
-        userID: {type:GraphQLString}
+        userID: {type: GraphQLID}
       },
       resolve(parent,args){
         let job = new Job({
