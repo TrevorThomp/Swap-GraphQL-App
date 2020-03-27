@@ -4,11 +4,13 @@ const {
   GraphQLObjectType,
   GraphQLList,
   GraphQLString,
-  GraphQLSchema
+  GraphQLSchema,
+  GraphQL
 } = require('graphql');
 const _ = require('lodash')
 const User = require('../model/user');
 const Job = require('../model/job');
+const bcrypt = require('bcrypt');
 
 const jobs = [
   {id: 1, username: 'Software Engineer', category: 'Tech', userID: 1},
@@ -39,9 +41,9 @@ const JobType = new GraphQLObjectType({
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
-    id: {type: GraphQLID},
     name: {type: GraphQLString},
     email: {type: GraphQLString},
+    password: {type: GraphQLString},
     jobs: {
       type: JobType,
       resolve(parent,args){
@@ -100,6 +102,23 @@ const Mutation = new GraphQLObjectType({
           userID: args.userID
         })
         return job.save();
+      }
+    },
+    addUser: {
+      type: UserType,
+      args: {
+        name: { type: GraphQLString},
+        email: {type: GraphQLString},
+        password: {type: GraphQLString}
+      },
+      async resolve(parent,args){
+        const hashed = await bcrypt.hash(args.password, 10)
+        let user = new User({
+          name: args.name,
+          email: args.email,
+          password: hashed
+        })
+        return user.save()
       }
     }
   }
