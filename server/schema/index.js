@@ -7,10 +7,12 @@ const {
   GraphQLSchema
 } = require('graphql');
 const _ = require('lodash')
+const User = require('../model/user');
+const Job = require('../model/job');
 
 const jobs = [
-  {id: 1, name: 'Software Engineer', category: 'Tech', userID: 1},
-  {id: 2, name: 'Landscaper', category: 'Landscaping', userID: 2}
+  {id: 1, username: 'Software Engineer', category: 'Tech', userID: 1},
+  {id: 2, username: 'Landscaper', category: 'Landscaping', userID: 2}
 ]
 
 const users = [
@@ -59,11 +61,23 @@ const RootQuery = new GraphQLObjectType({
         return _.find(jobs, {id: args.id})
       }
     },
+    jobs: {
+      type: new GraphQLList(JobType),
+      resolve(parent,args){
+        return jobs
+      }
+    },
     user: {
       type: UserType,
       args: {id: {type:GraphQLInt}},
       resolve(parent,args){
         return _.find(users, {id: args.id})
+      }
+    },
+    users: {
+      type: new GraphQLList(UserType),
+      resolve(parent, args){
+        return users
       }
     }
   }

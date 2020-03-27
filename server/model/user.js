@@ -6,4 +6,4 @@ const userSchema = new mongoose.Schema({
   email: String,
 })
 
-module.exports = mongoose.modeL('User', userSchema)
+module.exports = mongoose.model('User', userSchema)

@@ -2,6 +2,17 @@ const express = require('express');
 const app = express();
 const graphQLHTTP = require('express-graphql');
 const schema = require('./schema/');
+const mongoose = require('mongoose');
+
+const mongooseOptions = {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+};
+
+mongoose.connect('mongodb://localhost:27017/jobPost', mongooseOptions);
+mongoose.connection.once('open', () => console.log('Connected to DB'))
 
 
 app.get('/', (req, res) => {
