@@ -10,7 +10,7 @@ const {
 const _ = require('lodash')
 const User = require('../model/user');
 const Job = require('../model/job');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const jobs = [
   {id: 1, username: 'Software Engineer', category: 'Tech', userID: 1},
