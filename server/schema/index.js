@@ -89,13 +89,17 @@ const Mutation = new GraphQLObjectType({
     addJob: {
       type: JobType,
       args: {
-        id: {type: GraphQLInt},
         name: {type: GraphQLString},
-        category: {type: GraphQLString}
+        category: {type: GraphQLString},
+        userID: {type:GraphQLString}
       },
       resolve(parent,args){
-        items.push({id: args.id, name: args.name, category: args.category})
-        return _.find(items, {id: args.id})
+        let job = new Job({
+          name: args.name,
+          category: args.category,
+          userID: args.userID
+        })
+        return job.save();
       }
     }
   }
