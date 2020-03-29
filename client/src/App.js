@@ -1,5 +1,7 @@
 import React from 'react';
-import Items from './itemList'
+import Items from './components/itemList'
+import Navigation from './components/nav'
+import AddItem from './components/addItem'
 import ApolloClient from 'apollo-boost';
 import {ApolloProvider} from '@apollo/react-hooks';
 
@@ -11,10 +13,9 @@ function App() {
   return (
     <ApolloProvider client={client}>
     <div className="App">
-      <header className="App-header">
-        <h1>Sell Items</h1>
-      </header>
+      <Navigation />
       <Items/>
+      <AddItem />
     </div>
     </ApolloProvider>
   );

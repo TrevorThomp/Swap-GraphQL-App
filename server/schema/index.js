@@ -112,9 +112,9 @@ const Mutation = new GraphQLObjectType({
         let user = new User({
           username: args.username,
           email: args.email,
-          password: hashed
+          password: args.password
         })
-        return user.save()
+       return user.save()
       }
     }
   }

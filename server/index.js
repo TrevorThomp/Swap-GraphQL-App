@@ -3,6 +3,9 @@ const app = express();
 const graphQLHTTP = require('express-graphql');
 const schema = require('./schema/');
 const mongoose = require('mongoose');
+const cors = require('cors');
+
+app.use(cors())
 
 const mongooseOptions = {
   useNewUrlParser: true,
